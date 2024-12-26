@@ -1,118 +1,83 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  Image,
+  ImageSourcePropType,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
+import {trigger} from 'react-native-haptic-feedback';
+import React, {useState} from 'react';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Dice1 from './assets/1.png';
+import Dice2 from './assets/2.png';
+import Dice3 from './assets/3.png';
+import Dice4 from './assets/4.png';
+import Dice5 from './assets/5.png';
+import Dice6 from './assets/6.png';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const diceImages: ImageSourcePropType[] = [
+  Dice1,
+  Dice2,
+  Dice3,
+  Dice4,
+  Dice5,
+  Dice6,
+];
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+type DiceProps = {
+  imageSource: ImageSourcePropType;
+};
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const Dice = ({imageSource}: DiceProps): JSX.Element => {
+  return <Image source={imageSource} style={styles.dice} />;
+};
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+const App = () => {
+  const [currentFace, setCurrentFace] = useState<ImageSourcePropType>(Dice1);
+
+  const handleDiceRoll = () => {
+    const choice = Math.floor(Math.random() * 6);
+    setCurrentFace(diceImages[choice]);
+    trigger('impactLight');
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView style={styles.container}>
+      <Dice imageSource={currentFace} />
+      <TouchableOpacity style={styles.btn} onPress={handleDiceRoll}>
+        <Text style={styles.rollTxt}>Roll</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
+
+const styles = StyleSheet.create({
+  dice: {
+    height: 150,
+    width: 150,
+    borderRadius: 10,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+  rollTxt: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#fff',
+  },
+  btn: {
+    backgroundColor: '#000',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    elevation: 8,
+  },
+});
